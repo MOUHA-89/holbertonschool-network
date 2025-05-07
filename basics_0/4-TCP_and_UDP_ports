@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 # Show only listening sockets with PID and program name
 
-ss -ltnup
+ss-ltnup
