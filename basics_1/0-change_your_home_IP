@@ -3,8 +3,7 @@
 set -e
 
 # 1. Update /etc/hosts to make localhost resolve to 127.0.0.2
-sudo cp /etc/hosts /stc/hosts.bak
-sudo nano /etc/hosts
+sudo cp /etc/hosts /etc/hosts.bak
 echo "127.0.0.2   localhost" | sudo tee -a /etc/hosts
 
 # 2. Install dnsmasq if not already installed
@@ -21,9 +20,12 @@ echo "server=/facebook.com/8.8.8.8" | sudo tee /etc/dnsmasq.d/facebook.conf
 sudo sed -i 's/^#*listen-address=.*/listen-address=127.0.0.1/' /etc/dnsmasq.conf
 
 # 5. Set system DNS to use dnsmasq (127.0.0.1)
-echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf
+if ! grep -q "nameserver 127.0.0.1" /etc/resolv.conf; then
+    echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf
+fi
 
 # 6. Restart dnsmasq to apply changes
+sudo systemctl enable dnsmasq
 sudo systemctl restart dnsmasq
 
 # 7. Output success message
